@@ -125,3 +125,113 @@ DESC pipe employee_pipe;
     
 SELECT * FROM OUR_FIRST_DB.PUBLIC.employees ;
 
+/*------------------------------------------------------------------------------------------------------------------------------------------*/
+
+select 
+title,
+CASE 
+	WHEN rating IN ('PG','PG-13')  OR length > 210 THEN 'Great Rating or Long (Tier1)' 
+	WHEN description like '%Drama%' AND length > 90 THEN 'Long Drama tier2'
+	WHEN description like '%Drama%' THEN 'Short Drama tier3'
+	WHEN rental_rate<1 THEN 'Very cheap (tier 4)'
+END as Tier_List
+from film
+WHERE
+CASE 
+	WHEN rating IN ('PG','PG-13')  OR length > 210 THEN 'Great Rating or Long (Tier1)' 
+	WHEN description like '%Drama%' AND length > 90 THEN 'Long Drama tier2'
+	WHEN description like '%Drama%' THEN 'Short Drama tier3'
+	WHEN rental_rate<1 THEN 'Very cheap (tier 4)'
+END is not NUL
+
+SELECT
+title,
+CASE
+WHEN rating IN ('PG','PG-13') OR length > 210 THEN 'Great rating or long (tier 1)'
+WHEN description LIKE '%Drama%' AND length>90 THEN 'Long drama (tier 2)'
+WHEN description LIKE '%Drama%' THEN 'Short drama (tier 3)'
+WHEN rental_rate<1 THEN 'Very cheap (tier 4)'
+END as tier_list
+FROM film
+WHERE 
+CASE
+WHEN rating IN ('PG','PG-13') OR length > 210 THEN 'Great rating or long (tier 1)'
+WHEN description LIKE '%Drama%' AND length>90 THEN 'Long drama (tier 2)'
+WHEN description LIKE '%Drama%' THEN 'Short drama (tier 3)'
+WHEN rental_rate<1 THEN 'Very cheap (tier 4)'
+END is not null
+
+
+--------------------------------------------------------------------------------------
+
+select *
+from public.payment
+
+select
+customer_id,
+Date(payment_date),
+Round(AVG(anount),2) as avg_amount,
+count(*)
+from public.payment
+whe
+where date 
+
+-------------------------------------------------------------------------------------
+
+select * from customer
+select * from payment
+select * from address
+---------------------------------------------------------------------------------------
+/* Using subquery */
+    
+select first_name, last_name from customer
+where customer_id in
+(select customer_id from payment
+where date(payment_date) = '2020-01-25')
+
+----------------------------------------------------------------------------------
+
+select first_name, last_name, email from customer
+where customer_id in
+	(select customer_id from payment
+	group by customer_id
+	having sum(amount) >100
+	)
+AND customer_id in
+	(SELECT customer_id from customer A
+	INNER JOIN address B
+	ON A.address_id = B.address_id
+	WHERE B.district = 'California'
+	)
+---------------------------------------------------------------------------------------------
+select ROUND(avg(daily_revenue),2)
+from
+(select DATE(payment_date), sum(amount) as daily_revenue
+from payment
+Group by Date(payment_date)) As Sub
+
+
+---------------------------------------------------------------------------------------------
+
+select 
+*, (select Max(amount) from payment)-amount As difference
+from payment
+
+--------------------------------------------------------------------------------------------
+
+select * from film
+
+---------------------------------------------------------------------------------------------
+
+select title, film_id, replacement_cost,rating
+from film A
+WHERE replacement_cost = (select min(replacement_cost) from film B Where A.rating = B.rating)
+
+-----------------------------------------------------------------------------------------------
+select C.fare_conditions, count(*) from boarding_passes A
+INNER JOIN flights B
+ON A.flight_id = B.flight_id
+INNER JOIN seats C
+ON B.aircraft_code = C.aircraft_code AND A.seat_no = C.seat_no
+GROUP BY C.fare_conditions
+ORDER BY 2 DESC
