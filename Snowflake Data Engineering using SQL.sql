@@ -161,21 +161,6 @@ WHEN description LIKE '%Drama%' THEN 'Short drama (tier 3)'
 WHEN rental_rate<1 THEN 'Very cheap (tier 4)'
 END is not null
 
-
---------------------------------------------------------------------------------------
-
-select *
-from public.payment
-
-select
-customer_id,
-Date(payment_date),
-Round(AVG(anount),2) as avg_amount,
-count(*)
-from public.payment
-whe
-where date 
-
 -------------------------------------------------------------------------------------
 
 select * from customer
